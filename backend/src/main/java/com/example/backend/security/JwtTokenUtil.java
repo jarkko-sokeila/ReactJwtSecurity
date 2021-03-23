@@ -3,6 +3,8 @@ package com.example.backend.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +17,8 @@ import java.util.function.Function;
 @Component
 public class JwtTokenUtil implements Serializable {
     private static final long serialVersionUID = -2550185165626007488L;
+
+    private static final Logger log = LoggerFactory.getLogger(JwtTokenUtil.class);
 
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 
@@ -66,5 +70,15 @@ public class JwtTokenUtil implements Serializable {
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = getUsernameFromToken(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    }
+
+    public Boolean validateToken(String token) {
+        try {
+            Jwts.parser().setSigningKey(secret).parse(token);
+            return true;
+        } catch (Exception e) {
+            log.debug("Token was not valid: {}", e.getMessage());
+        }
+        return false;
     }
 }

@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin
+@CrossOrigin(origins = "*")
 @RequestMapping("auth")
 public class AuthController {
     @Autowired
@@ -36,5 +36,11 @@ public class AuthController {
         final UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
         final String jwtToken = jwtTokenUtil.generateToken(userDetails);
         return ResponseEntity.ok(new JwtResponseModel(jwtToken));
+    }
+
+    @PostMapping("validatetoken")
+    public ResponseEntity<JwtTokenValidationResponse> createToken(@RequestBody String token) {
+        final boolean isValid = jwtTokenUtil.validateToken(token);
+        return ResponseEntity.ok(new JwtTokenValidationResponse(isValid));
     }
 }

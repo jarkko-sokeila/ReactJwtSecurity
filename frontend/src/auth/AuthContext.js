@@ -19,12 +19,12 @@ function ProvideAuth({ children }) {
 export {ProvideAuth, useAuth}
 
 function useProvideAuth() {
-    const signin = (username, password, cb) => {
+    const signin = (username, password, cb, ecb) => {
         return Auth.signin(username, password, (token) => {
             console.log('Signed in with token: ' + token)
             window.sessionStorage.setItem("token", token)
             cb();
-        });
+        }, (data) => {ecb(data)});
     };
 
     const signout = cb => {

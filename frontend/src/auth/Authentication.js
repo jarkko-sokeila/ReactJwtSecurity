@@ -1,5 +1,5 @@
 const Auth = {
-    signin(username, password, cb) {
+    signin(username, password, cb, ecb) {
         const data = { username: username, password: password };
         console.log('Login with username: ' + username + ', password: ' + password)
         fetch('http://localhost:8080/auth/login', {
@@ -12,10 +12,15 @@ const Auth = {
             .then(response => response.json())
             .then(data => {
                 console.log('Success:', data);
-                cb(data.token)
+                if(data.token) {
+                    cb(data.token)
+                } else {
+                    ecb(data)
+                }
             })
             .catch((error) => {
                 console.error('Error:', error);
+                ecb(error)
             });
     },
     signout(cb) {
